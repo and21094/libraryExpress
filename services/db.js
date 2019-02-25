@@ -5,6 +5,7 @@ const Promise = require('bluebird');
 const config = require('../env/qa');
 
 const Users = require('./models/user')
+const Collections = require('./models/collection')
 
 const dbConfig = config.db;
 
@@ -12,6 +13,7 @@ class DB {
     constructor() {
         // Models
         this.users = new Users(this);
+        this.collections = new Collections(this);
     }
 
     connect(callback) {

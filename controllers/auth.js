@@ -2,7 +2,6 @@
 
 const tokenService = require('../services/token');
 const utils = require('../lib/utils');
-const boom = require('boom');
 const DB = require('../services/db');
 
 var login = async (req, res) => {
@@ -12,20 +11,20 @@ var login = async (req, res) => {
   const query = await db.users.findOne(data);
 
   if (!query.result || !query.data) {
-    throw boom.badRequest('Invalid data');
+    return res.send({ result: false, message: 'Los datos que has ingresado para iniciar sesión no son válidos.' });
   }
 
   const user = query.data;
   const checkedPassword = await utils.checkPassword(user.password, Buffer.from(data.password, 'base64').toString());
 
   if (!checkedPassword) {
-    throw boom.badRequest('Invalid data');
+    return res.send({ result: false, message: 'Los datos que has ingresado para iniciar sesión no son válidos.' });
   }
 
   const token = await tokenService.signToken({ userId: user._id });
-  const message = { result: true, user: user._id, token };
 
-  res.json(message);
+  return res.send({ result: true, data: {user: user._id, token} });
+
 }
 
 module.exports = {
