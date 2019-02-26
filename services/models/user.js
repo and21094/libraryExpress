@@ -47,8 +47,6 @@ class Users {
     return Promise.resolve(task()).asCallback(callback)
   }
 
-  // Tank.find({ size: 'small' }).where('createdDate').gt(oneYearAgo).exec(callback);
-
 }
 
 module.exports = Users;

@@ -11,6 +11,7 @@ var login = async (req, res) => {
   const query = await db.users.findOne(data);
 
   if (!query.result || !query.data) {
+    await db.disconnect();
     return res.send({ result: false, message: 'Los datos que has ingresado para iniciar sesión no son válidos.' });
   }
 
@@ -18,11 +19,13 @@ var login = async (req, res) => {
   const checkedPassword = await utils.checkPassword(user.password, Buffer.from(data.password, 'base64').toString());
 
   if (!checkedPassword) {
+    await db.disconnect();
     return res.send({ result: false, message: 'Los datos que has ingresado para iniciar sesión no son válidos.' });
   }
 
   const token = await tokenService.signToken({ userId: user._id });
 
+  await db.disconnect();
   return res.send({ result: true, data: {user: user._id, token} });
 
 }

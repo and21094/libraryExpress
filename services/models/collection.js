@@ -8,7 +8,8 @@ const schema = new Schema({
   name: { type: String, required: true },
   type: {type: Number, default: 1},
   user: { type: String, required: true },
-  objects: { type: Object, required: false },
+  mainCollection: { type: String, default: ''},
+  objects: { type: Array, default: [] },
   created_at: { type: Number, default: new Date().getTime() },
 })
 
@@ -20,14 +21,12 @@ class Collections {
     this.db = db
   }
 
-  find(data, callback) {
-
-    // var user = new User(data)
+  findAll(data, callback) {
 
     const task = Promise.coroutine(
       function* main() {
         if (!this.connected) {
-          yield this.db.connect()
+          yield this.db.connect();
         }
 
         return new Promise((resolve, reject) => {
@@ -36,15 +35,92 @@ class Collections {
               resolve({ result: true, data: res })
             })
             .catch(err => {
-            //   reject(new StandardError({ message: 'error creating user', code: 'error-db02' }))
-            reject({message: 'error finding collections', err});
+              reject({message: 'error finding collections', err});
             })
         })
       }.bind(this)
 
     )
 
-    return Promise.resolve(task()).asCallback(callback)
+    return Promise.resolve(task()).asCallback(callback);
+  }
+
+  findOne(data, callback) {
+
+    const task = Promise.coroutine(
+      function* main() {
+        if (!this.connected) {
+          yield this.db.connect();
+        }
+
+        return new Promise((resolve, reject) => {
+          Collection.findOne({_id: data.id, user: data.user})
+            .then(res => {
+              resolve({ result: true, data: res })
+            })
+            .catch(err => {
+              reject({message: 'error finding the collection', err});
+            })
+        })
+      }.bind(this)
+
+    )
+
+    return Promise.resolve(task()).asCallback(callback);
+  }
+
+  create(data, callback) {
+
+    var collection = new Collection(data)
+
+    const task = Promise.coroutine(
+      function* main() {
+        if (!this.connected) {
+          yield this.db.connect()
+        }
+
+        return new Promise((resolve, reject) => {
+          Collection.create(collection)
+            .then(res => {
+              resolve({ result: true, data: res })
+            })
+            .catch(err => {
+              reject({message: 'error creating collection', err});
+            })
+        })
+      }.bind(this)
+
+    )
+
+    return Promise.resolve(task()).asCallback(callback);
+  }
+
+  create(data, callback) {
+
+    var collection = new Collection(data)
+
+    const task = Promise.coroutine(
+      function* main() {
+        if (!this.connected) {
+          yield this.db.connect()
+        }
+
+        return new Promise((resolve, reject) => {
+          Collection.update(
+            {_id: data.id},
+            {objects: data.objects}
+          ).then(res => {
+              resolve({ result: true, data: res })
+            })
+            .catch(err => {
+              reject({message: 'error creating collection', err});
+            })
+        })
+      }.bind(this)
+
+    )
+
+    return Promise.resolve(task()).asCallback(callback);
   }
 
 }

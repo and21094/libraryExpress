@@ -32,7 +32,8 @@ class DB {
             reject(`No active DB connection was found`);
         }
 
-        this.connection.disconnect()
+        // this.connection.disconnect()
+        mongoose.disconnect()
         this.connected = false
         resolve(this.connection)
 

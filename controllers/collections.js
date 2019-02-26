@@ -10,38 +10,94 @@ var getCollections = async (req, res) => {
     return res.status(403).json({ error: 'No credentials sent!' });
   }
 
-  
   const user = req.query.user;
   const token = await tokenService.extractToken(req);
   const veryfiedToken = await tokenService.verifyToken(token);
-  
+
   if (veryfiedToken.userId !== user) {
     return res.status(403).json({ error: 'Invalid credentials sent!' });
   }
-  
+
   const db = new DB();
+
+  const query = await db.collections.findAll(user);
+
+  await db.disconnect();
+  return res.send(query);
+}
+
+var getCollection = async (req, res) => {
+
+  if (!req.headers.authorization || !req.query.user) {
+    return res.status(403).json({ error: 'No credentials sent!' });
+  }
+
+  const user = req.query.user;
+  const id = req.params.id;
+  const token = await tokenService.extractToken(req);
+  const veryfiedToken = await tokenService.verifyToken(token);
+
+  if (veryfiedToken.userId !== user) {
+    return res.status(403).json({ error: 'Invalid credentials sent!' });
+  }
+
+  const db = new DB();
+
+  const query = await db.collections.findOne({id, user});
+
+  await db.disconnect();
+  return res.send(query);
+}
+
+var createCollections = async (req, res) => {
   
-//   const data = await req.body;
+  if (!req.headers.authorization) {
+    return res.status(403).json({ error: 'No credentials sent!' });
+  }
+  
+  const data = req.body;
+  const token = await tokenService.extractToken(req);
+  const veryfiedToken = await tokenService.verifyToken(token);
+  
+  if (veryfiedToken.userId !== data.user) {
+    return res.status(403).json({ error: 'Invalid credentials sent!' });
+  }
 
-  const query = await db.collections.find(user);
-  const data = query.data;
+  const db = new DB();
+  const query = await db.collections.create(data);
 
-  return res.send({ result: true, data });
+  await db.disconnect();
+  return res.send(query);
 
-//   const user = query.data;
-//   const checkedPassword = await utils.checkPassword(user.password, Buffer.from(data.password, 'base64').toString());
+}
 
-//   if (!checkedPassword) {
-//     res.send({ result: false, message: 'Los datos que has ingresado para iniciar sesión no son válidos.' });
-//     return;
-//   }
+var updateCollection = async (req, res) => {
+  
+  if (!req.headers.authorization) {
+    return res.status(403).json({ error: 'No credentials sent!' });
+  }
+  
+  const data = req.body;
+  const id = req.params.id;
+  console.log(data);
+  const token = await tokenService.extractToken(req);
+  const veryfiedToken = await tokenService.verifyToken(token);
+  
+  if (veryfiedToken.userId !== data.user) {
+    return res.status(403).json({ error: 'Invalid credentials sent!' });
+  }
 
-//   const token = await tokenService.signToken({ userId: user._id });
+  // const db = new DB();
+  // const query = await db.collections.update({collection: id, data.data});
 
-  // res.send({ result: true, data: {meesagge: 'hi'} });
-  // return;
+  // await db.disconnect();
+  return res.send({result:true});
+
 }
 
 module.exports = {
-    getCollections
+    getCollections,
+    createCollections,
+    getCollection,
+    updateCollection
 };
