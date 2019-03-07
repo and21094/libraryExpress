@@ -11,6 +11,6 @@ const asyncMiddleware = fn => (req, res, next) => {
 router.get('/', asyncMiddleware(controller.getCollections));
 router.get('/:id', asyncMiddleware(controller.getCollection));
 router.post('/', asyncMiddleware(controller.createCollections));
-router.post('/:id', asyncMiddleware(controller.updateCollection));
+// router.post('/:id', asyncMiddleware(controller.updateCollection));
 
 module.exports = router;

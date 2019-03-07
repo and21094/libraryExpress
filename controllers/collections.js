@@ -71,33 +71,33 @@ var createCollections = async (req, res) => {
 
 }
 
-var updateCollection = async (req, res) => {
+// var updateCollection = async (req, res) => {
   
-  if (!req.headers.authorization) {
-    return res.status(403).json({ error: 'No credentials sent!' });
-  }
+//   if (!req.headers.authorization) {
+//     return res.status(403).json({ error: 'No credentials sent!' });
+//   }
   
-  const data = req.body;
-  const id = req.params.id;
-  console.log(data);
-  const token = await tokenService.extractToken(req);
-  const veryfiedToken = await tokenService.verifyToken(token);
+//   const data = req.body;
+//   const id = req.params.id;
+//   console.log(data);
+//   const token = await tokenService.extractToken(req);
+//   const veryfiedToken = await tokenService.verifyToken(token);
   
-  if (veryfiedToken.userId !== data.user) {
-    return res.status(403).json({ error: 'Invalid credentials sent!' });
-  }
+//   if (veryfiedToken.userId !== data.user) {
+//     return res.status(403).json({ error: 'Invalid credentials sent!' });
+//   }
 
-  // const db = new DB();
-  // const query = await db.collections.update({collection: id, data.data});
+//   // const db = new DB();
+//   // const query = await db.collections.update({collection: id, data.data});
 
-  // await db.disconnect();
-  return res.send({result:true});
+//   // await db.disconnect();
+//   return res.send({result:true});
 
-}
+// }
 
 module.exports = {
     getCollections,
     createCollections,
-    getCollection,
-    updateCollection
+    getCollection
+    // updateCollection
 };

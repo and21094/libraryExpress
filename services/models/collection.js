@@ -6,11 +6,11 @@ const Schema = mongoose.Schema;
 
 const schema = new Schema({
   name: { type: String, required: true },
-  type: {type: Number, default: 1},
+  type: {type: Number, default: 1, required: true },
   user: { type: String, required: true },
-  mainCollection: { type: String, default: ''},
-  objects: { type: Array, default: [] },
-  created_at: { type: Number, default: new Date().getTime() },
+  mainCollection: { type: String, default: '', required: false },
+  objects: { type: Array, default: [], required: false },
+  created_at: { type: Number, default: new Date().getTime(), required: false },
 })
 
 var Collection = mongoose.model('Collection', schema);
@@ -95,33 +95,33 @@ class Collections {
     return Promise.resolve(task()).asCallback(callback);
   }
 
-  create(data, callback) {
+  // create(data, callback) {
 
-    var collection = new Collection(data)
+  //   var collection = new Collection(data)
 
-    const task = Promise.coroutine(
-      function* main() {
-        if (!this.connected) {
-          yield this.db.connect()
-        }
+  //   const task = Promise.coroutine(
+  //     function* main() {
+  //       if (!this.connected) {
+  //         yield this.db.connect()
+  //       }
 
-        return new Promise((resolve, reject) => {
-          Collection.update(
-            {_id: data.id},
-            {objects: data.objects}
-          ).then(res => {
-              resolve({ result: true, data: res })
-            })
-            .catch(err => {
-              reject({message: 'error creating collection', err});
-            })
-        })
-      }.bind(this)
+  //       return new Promise((resolve, reject) => {
+  //         Collection.update(
+  //           {_id: data.id},
+  //           {objects: data.objects}
+  //         ).then(res => {
+  //             resolve({ result: true, data: res })
+  //           })
+  //           .catch(err => {
+  //             reject({message: 'error creating collection', err});
+  //           })
+  //       })
+  //     }.bind(this)
 
-    )
+  //   )
 
-    return Promise.resolve(task()).asCallback(callback);
-  }
+  //   return Promise.resolve(task()).asCallback(callback);
+  // }
 
 }
 
